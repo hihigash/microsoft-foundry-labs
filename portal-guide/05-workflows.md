@@ -1,51 +1,51 @@
-# 05. 워크플로우
+# 05. ワークフロー
 
-이 모듈에서는 여러 에이전트를 조합하여 복잡한 작업을 수행하는 워크플로우를 구축하는 방법을 학습합니다.
+このモジュールでは、複数のエージェントを組み合わせて複雑なタスクを実行するワークフローを構築する方法を学習します。
 
-## 📋 목차
+## 📋 目次
 
-- [워크플로우 개요](#워크플로우-개요)
+- [ワークフロー概要](#ワークフロー概要)
 - [Sequential Workflow](#sequential-workflow)
 - [Group Chat Workflow](#group-chat-workflow)
 - [Human-in-loop Workflow](#human-in-loop-workflow)
-- [다음 단계](#다음-단계)
+- [次のステップ](#次のステップ)
 
-## 🎯 학습 목표
+## 🎯 学習目標
 
-- Microsoft Foundry 워크플로우의 핵심 개념 이해
-- Sequential Workflow를 통한 순차적 작업 흐름 구축
-- Group Chat Workflow를 통한 다중 에이전트 협업 구현
-- Human-in-loop 패턴을 통한 사람 개입 지점 설정
-- 워크플로우 배포 및 프로그래매틱 호출
+- Microsoft Foundryワークフローのコア概念を理解
+- Sequential Workflowを通じた順次的なタスクフローの構築
+- Group Chat Workflowを通じたマルチエージェント協調の実装
+- Human-in-loopパターンを通じた人間の介入ポイントの設定
+- ワークフローのデプロイとプログラマティック呼び出し
 
-## ⏱️ 예상 소요 시간
+## ⏱️ 予想所要時間
 
-약 20분
+約20分
 
 ---
 
-## 워크플로우 개요
+## ワークフロー概要
 
-### 워크플로우란?
+### ワークフローとは？
 
-워크플로우는 여러 AI 에이전트를 조율하여 복잡한 작업을 단계적으로 수행하는 자동화 시스템입니다.
+ワークフローは複数のAIエージェントを調整して複雑なタスクを段階的に実行する自動化システムです。
 
-### 워크플로우 타입
+### ワークフロータイプ
 
 ```
 Single Agent → Sequential Workflow → Group Chat → Human-in-loop
-(단순)                                                    (복잡)
+(シンプル)                                                    (複雑)
 ```
 
-| 타입 | 설명 | 사용 사례 |
+| タイプ | 説明 | ユースケース |
 |------|------|-----------|
-| **Sequential** | 순차적 실행 | 데이터 파이프라인, 문서 처리 |
-| **Parallel** | 병렬 실행 | 동시 분석, 다중 검색 |
-| **Group Chat** | 에이전트 간 대화 | 협업 문제 해결, 의사결정 |
-| **Human-in-loop** | 사람 개입 | 승인 프로세스, 검증 |
-| **Conditional** | 조건부 분기 | 동적 라우팅, 에러 처리 |
+| **Sequential** | 順次実行 | データパイプライン、ドキュメント処理 |
+| **Parallel** | 並列実行 | 同時分析、複数検索 |
+| **Group Chat** | エージェント間対話 | 協調問題解決、意思決定 |
+| **Human-in-loop** | 人間の介入 | 承認プロセス、検証 |
+| **Conditional** | 条件分岐 | 動的ルーティング、エラー処理 |
 
-### 워크플로우 구성 요소
+### ワークフローの構成要素
 
 ```python
 Workflow {
@@ -62,126 +62,126 @@ Workflow {
 
 ## Sequential Workflow
 
-순차적으로 실행되는 에이전트 체인을 구축합니다. 여행 계획 수립 워크플로우를 예시로 사용합니다.
+順次実行されるエージェントチェーンを構築します。旅行計画作成ワークフローを例として使用します。
 
-### 필요한 에이전트 생성
+### 必要なエージェントの作成
 
-먼저 워크플로우에서 사용할 에이전트들을 생성합니다.
+まずワークフローで使用するエージェントを作成します。
 
 #### 1. TravelPlannerAgent
 
 ```
 Agent name: TravelPlannerAgent
-Description: 여행 목적지와 일정을 기획하는 에이전트
+Description: 旅行目的地と日程を企画するエージェント
 Model: gpt-5.1
 
 Instructions:
-당신은 여행 계획 전문가입니다.
+あなたは旅行計画の専門家です。
 
-역할:
-1. 사용자의 여행 요구사항을 분석합니다
-2. 목적지의 주요 관광지, 맛집, 숙소를 추천합니다
-3. 일자별 여행 일정을 구체적으로 작성합니다
-4. 예상 비용과 준비물을 제시합니다
+役割：
+1. ユーザーの旅行要件を分析します
+2. 目的地の主要観光スポット、グルメ、宿泊施設を推薦します
+3. 日程別の旅行スケジュールを具体的に作成します
+4. 予想費用と準備物を提示します
 
-출력 형식:
-- 목적지 개요
-- 일자별 일정 (아침/점심/저녁 활동)
-- 추천 숙소
-- 예상 비용
-- 준비물 목록
+出力形式：
+- 目的地概要
+- 日程別スケジュール（朝/昼/夜の活動）
+- おすすめ宿泊施設
+- 予想費用
+- 準備物リスト
 
-다음 에이전트에게 넘길 정보: 전체 여행 계획
+次のエージェントに渡す情報: 全体の旅行計画
 ```
 
 #### 2. LocalAgent
 
 ```
 Agent name: LocalAgent
-Description: 현지 정보를 추가하는 에이전트
+Description: 現地情報を追加するエージェント
 Model: gpt-5.1
 
-Tools: Web search (활성화)
+Tools: Web search (有効化)
 
 Instructions:
-당신은 현지 정보 전문가입니다.
+あなたは現地情報の専門家です。
 
-역할:
-1. 이전 에이전트의 여행 계획을 받습니다
-2. Web search를 사용하여 최신 현지 정보를 검색합니다
-3. 실시간 정보를 추가합니다:
-   - 현재 날씨 및 기후
-   - 현지 축제 및 이벤트
-   - 교통 정보 (노선, 요금, 소요시간)
-   - 영업시간 및 예약 정보
-   - 현지 문화 및 주의사항
+役割：
+1. 前のエージェントの旅行計画を受け取ります
+2. Web searchを使用して最新の現地情報を検索します
+3. リアルタイム情報を追加します：
+   - 現在の天気と気候
+   - 現地のフェスティバルとイベント
+   - 交通情報（路線、料金、所要時間）
+   - 営業時間と予約情報
+   - 現地文化と注意事項
 
-출력 형식:
-- 원래 일정 + 현지 정보 보강
-- 교통편 상세 정보
-- 예약 필요 장소 목록
-- 현지 팁
+出力形式：
+- 元のスケジュール + 現地情報補強
+- 交通手段の詳細情報
+- 予約が必要な場所のリスト
+- 現地のヒント
 
-다음 에이전트에게 넘길 정보: 현지 정보가 추가된 여행 계획
+次のエージェントに渡す情報: 現地情報が追加された旅行計画
 ```
 
 #### 3. TravelSummaryAgent
 
 ```
 Agent name: TravelSummaryAgent
-Description: 여행 계획을 요약하고 최종 체크리스트를 만드는 에이전트
+Description: 旅行計画を要約し最終チェックリストを作成するエージェント
 Model: gpt-5.1
 
 Instructions:
-당신은 여행 계획 정리 전문가입니다.
+あなたは旅行計画整理の専門家です。
 
-역할:
-1. 이전 에이전트들의 정보를 종합합니다
-2. 실행 가능한 최종 계획으로 정리합니다
-3. 체크리스트를 생성합니다
+役割：
+1. 前のエージェントの情報を総合します
+2. 実行可能な最終計画に整理します
+3. チェックリストを生成します
 
-출력 형식:
-📋 여행 요약
-- 목적지: 
-- 기간:
-- 예산:
+出力形式：
+�� 旅行概要
+- 目的地: 
+- 期間:
+- 予算:
 
-📅 일정 요약 (한눈에 보는 일정)
+📅 スケジュール概要（一目で見るスケジュール）
 
-✅ 출발 전 체크리스트
-- [ ] 항목1
-- [ ] 항목2
+✅ 出発前チェックリスト
+- [ ] 項目1
+- [ ] 項目2
 
-🎒 준비물 체크리스트
+🎒 準備物チェックリスト
 
-📞 긴급 연락처 및 유용한 정보
+📞 緊急連絡先と便利な情報
 
-최종 출력: 프린트 가능한 여행 가이드
+最終出力: 印刷可能な旅行ガイド
 ```
 
-### Sequential Workflow 생성
+### Sequential Workflowの作成
 
-1. **Workflows 섹션 이동**
+1. **Workflowsセクションへ移動**
 
-   - Foundry 포털 우측 상단 메뉴에서 **Build**를 선택합니다.
-   - **Workflows** 메뉴를 클릭합니다.
+   - Foundryポータル右上メニューで**Build**を選択します。
+   - **Workflows**メニューをクリックします。
    
-   ![Build > Workflows 메뉴](../assets/05-01-workflows-menu.png)
+   ![Build > Workflowsメニュー](../assets/05-01-workflows-menu.png)
 
-2. **새 워크플로우 생성**
+2. **新しいワークフローの作成**
 
-   - **+ Create workflow** 또는 **New workflow** 버튼을 클릭합니다.
-   - **Sequential Workflow**를 선택합니다.
+   - **+ Create workflow**または**New workflow**ボタンをクリックします。
+   - **Sequential Workflow**を選択します。
    
-   ![Create workflow 버튼](../assets/05-02-create-workflow.png)
+   ![Create workflowボタン](../assets/05-02-create-workflow.png)
 
-   ![Create workflow 버튼2](../assets/05-02-create-workflow-2.png)
+   ![Create workflowボタン2](../assets/05-02-create-workflow-2.png)
 
-3. **에이전트 추가**
+3. **エージェントの追加**
 
-   순서대로 에이전트를 추가합니다:
+   順番にエージェントを追加します：
    
-   ![Select an agent to invoke 버튼](../assets/05-04-workflow-add-agent.png)
+   ![Select an agent to invokeボタン](../assets/05-04-workflow-add-agent.png)
 
    ```
    Step 1: TravelPlannerAgent
@@ -191,71 +191,71 @@ Instructions:
    Step 3: TravelSummaryAgent
    ```
 
-   - 각 단계에서 **Select an agent to invoke** 버튼을 클릭하여 에이전트를 선택합니다.
+   - 各ステップで**Select an agent to invoke**ボタンをクリックしてエージェントを選択します。
 
-   ![Select an agent to invoke 버튼1](../assets/05-04-workflow-add-agent1.png)
+   ![Select an agent to invokeボタン1](../assets/05-04-workflow-add-agent1.png)
    
-   ![Select an agent to invoke 버튼2](../assets/05-04-workflow-add-agent2.png)
+   ![Select an agent to invokeボタン2](../assets/05-04-workflow-add-agent2.png)
 
-   ![Select an agent to invoke 버튼3](../assets/05-04-workflow-add-agent3.png)
+   ![Select an agent to invokeボタン3](../assets/05-04-workflow-add-agent3.png)
 
-   ![전체 workflow](../assets/05-02-overall-workflow.png)
+   ![全体workflow](../assets/05-02-overall-workflow.png)
 
-4. **워크플로우 저장**
+4. **ワークフローの保存**
 
-   - **Save** 버튼을 클릭합니다.
+   - **Save**ボタンをクリックします。
 
-   ![Workflow 이름 등록](../assets/05-02-workflow-save.png)
+   ![Workflow名登録](../assets/05-02-workflow-save.png)
 
-   ![Workflow 이름 저장](../assets/05-02-workflow-saved.png)
+   ![Workflow名保存](../assets/05-02-workflow-saved.png)
 
-### 워크플로우 테스트
+### ワークフローのテスト
 
-1. **Preview 모드**
+1. **Previewモード**
 
-   - **Preview** 버튼을 클릭합니다.
+   - **Preview**ボタンをクリックします。
 
-2. **테스트 질문**
+2. **テスト質問**
 
    ```
-   사용자: 제주도 2박 3일 여행 계획 세우는 것을 도와줘.
+   ユーザー: 東京2泊3日の旅行計画を立てるのを手伝ってください。
    ```
 
-3. **실행 과정 관찰**
+3. **実行プロセスの観察**
 
-   각 단계에서의 출력을 확인합니다:
+   各ステップでの出力を確認します：
 
-   - **Step 1 (TravelPlannerAgent)**: 기본 여행 일정 생성
-   - **Step 2 (LocalAgent)**: 현지 정보 추가 (날씨, 교통, 이벤트)
-   - **Step 3 (TravelSummaryAgent)**: 최종 요약 및 체크리스트
+   - **Step 1 (TravelPlannerAgent)**: 基本旅行スケジュールの生成
+   - **Step 2 (LocalAgent)**: 現地情報の追加（天気、交通、イベント）
+   - **Step 3 (TravelSummaryAgent)**: 最終要約とチェックリスト
 
    ![Workflow Preview](../assets/05-05-workflow-preview.png)
 
-4. **Traces 확인**
+4. **Tracesの確認**
 
-   - 각 에이전트의 실행 시간
-   - 에이전트 간 데이터 전달
-   - 최종 출력 생성 과정
+   - 各エージェントの実行時間
+   - エージェント間のデータ転送
+   - 最終出力生成プロセス
 
-### 워크플로우 배포 및 호출
+### ワークフローのデプロイと呼び出し
 
 1. **Publish**
 
-   - **Publish** 버튼을 클릭합니다.
+   - **Publish**ボタンをクリックします。
 
    ![Workflow Publish-1](../assets/05-05-workflow-publish1.png)
 
-   - 버전을 확인하고 게시합니다.
+   - バージョンを確認して公開します。
 
    ![Workflow Publish-2](../assets/05-05-workflow-publish2.png)
 
    ![Workflow Publish-3](../assets/05-05-workflow-publish3.png)
 
-2. **Python SDK로 호출**
+2. **Python SDKでの呼び出し**
 
-   > 💡 **실습 팁**: 아래 코드는 참고용입니다. 실제 실습 시에는 이 저장소의 루트 경로에 있는 `invokeWorkflow.py` 파일을 열어 `PROJECT_ENDPOINT`와 `WORKFLOW_NAME` 값을 본인 환경에 맞게 수정한 후 실행하세요.
+   > 💡 **実習のヒント**: 以下のコードは参考用です。実際の実習時にはこのリポジトリのルートパスにある`invokeWorkflow.py`ファイルを開いて`PROJECT_ENDPOINT`と`WORKFLOW_NAME`の値を自分の環境に合わせて修正してから実行してください。
 
-   `invokeWorkflow.py` 파일 예시:
+   `invokeWorkflow.py`ファイル例：
 
    ```python
    # Microsoft Foundry Workflow Invocation using Foundry SDK
@@ -267,7 +267,7 @@ Instructions:
    # Project configuration
    PROJECT_ENDPOINT = "https://<foundry-resource-name>.services.ai.azure.com/api/projects/proj-default"
    WORKFLOW_NAME = "Sequential-Workflow"
-   WORKFLOW_VERSION = "1"  # 게시된 버전으로 업데이트
+   WORKFLOW_VERSION = "1"  # 公開されたバージョンに更新
    
    # Create AI Project client
    project_client = AIProjectClient(
@@ -283,21 +283,21 @@ Instructions:
        
        # Get OpenAI client from project
        openai_client = project_client.get_openai_client()
-   
+
        # Create a conversation
        conversation = openai_client.conversations.create()
        print(f"Created conversation (id: {conversation.id})")
-   
+
        # Call the workflow with streaming
        print(f"\nCalling workflow: {WORKFLOW_NAME}...\n")
        stream = openai_client.responses.create(
            conversation=conversation.id,
            extra_body={"agent": {"name": workflow["name"], "type": "agent_reference"}},
-           input="제주도 2박 3일 여행 일정 짜줘",
+           input="東京2泊3日の旅行スケジュールを作成してください",
            stream=True,
            metadata={"x-ms-debug-mode-enabled": "1"},
        )
-   
+
        # Process streaming events
        for event in stream:
            if event.type == ResponseStreamEventType.RESPONSE_OUTPUT_TEXT_DONE:
@@ -311,301 +311,301 @@ Instructions:
                print(f"  (previous item was: '{event.item.previous_action_id}')")
            elif event.type == ResponseStreamEventType.RESPONSE_OUTPUT_TEXT_DELTA:
                print(event.delta, end="", flush=True)
-   
+
        # Clean up
        print("\n\n✅ Workflow completed!")
        openai_client.conversations.delete(conversation_id=conversation.id)
        print("Conversation deleted")
    ```
 
-3. **실행**
+3. **実行**
 
    ```bash
    pip install --pre azure-ai-projects>=2.0.0b1
    python invokeWorkflow.py
    ```
 
-### ✅ 확인 사항
+### ✅ 確認事項
 
-- 모든 에이전트가 순서대로 실행되는지 확인
-- 각 에이전트의 출력이 다음 에이전트에 전달되는지 확인
-- 최종 출력이 올바르게 생성되는지 확인
+- すべてのエージェントが順番に実行されることを確認
+- 各エージェントの出力が次のエージェントに渡されることを確認
+- 最終出力が正しく生成されることを確認
 
 ---
 
 ## Group Chat Workflow
 
-여러 에이전트가 대화를 통해 협업하여 문제를 해결하는 워크플로우입니다.
+複数のエージェントが対話を通じて協調して問題を解決するワークフローです。
 
 
-### 필요한 에이전트 생성
+### 必要なエージェントの作成
 
 #### 1. StudentAgent
 
 ```
 Agent name: StudentAgent
-Description: 질문에 답변하는 학생 역할
+Description: 質問に回答する学生役
 Model: gpt-5.1
 
 Instructions:
-너는 문제에 대답하는 에이전트야. 질문이 오면, 항상 답변해줘.
+あなたは質問に回答するエージェントです。質問が来たら常に回答してください。
 
-역할:
-1. 사용자의 질문을 이해하고 답변을 생성합니다
-2. 첫 번째 시도에서는 기본적인 답변을 제공합니다
-3. TeacherAgent의 피드백을 받아 답변을 개선합니다
-4. 모든 요구사항이 충족될 때까지 답변을 수정합니다
+役割：
+1. ユーザーの質問を理解して回答を生成します
+2. 最初の試みでは基本的な回答を提供します
+3. TeacherAgentのフィードバックを受けて回答を改善します
+4. すべての要件が満たされるまで回答を修正します
 
-답변 시 고려사항:
-- 일정 (날짜, 시간)
-- 비용 (예산, 가격)
-- 취향 (선호도, 스타일)
-- 제약사항 (제한사항, 조건)
+回答時の考慮事項：
+- スケジュール（日付、時間）
+- コスト（予算、価格）
+- 好み（嗜好、スタイル）
+- 制約事項（制限事項、条件）
 
-개선이 필요하면 TeacherAgent의 피드백을 반영하여 답변을 보완합니다.
+改善が必要な場合はTeacherAgentのフィードバックを反映して回答を補完します。
 ```
 
 #### 2. TeacherAgent
 
 ```
 Agent name: TeacherAgent
-Description: 답변을 평가하고 개선을 요청하는 교사 역할
+Description: 回答を評価し改善を要求する教師役
 Model: gpt-5.1
 
 Instructions:
-너는 답변을 평가하는 에이전트야. 답변이 일정, 비용, 취향 등 다양한 조건에 대한 고려를 했다면 [COMPLETE]이라고 대답해줘. 아니라면, COMPLETE을 표시하지 말고, 수정을 요청해줘.
+あなたは回答を評価するエージェントです。回答がスケジュール、コスト、好みなど様々な条件を考慮していれば[COMPLETE]と回答してください。そうでなければ、COMPLETEを表示せずに修正を要求してください。
 
-평가 기준:
-1. 일정: 구체적인 날짜, 시간, 기간이 포함되었는가?
-2. 비용: 예산, 가격, 비용 정보가 포함되었는가?
-3. 취향: 사용자의 선호도나 스타일을 고려했는가?
-4. 실용성: 실제로 실행 가능한 계획인가?
-5. 완성도: 모든 필요한 정보가 포함되었는가?
+評価基準：
+1. スケジュール：具体的な日付、時間、期間が含まれているか？
+2. コスト：予算、価格、費用情報が含まれているか？
+3. 好み：ユーザーの嗜好やスタイルを考慮したか？
+4. 実用性：実際に実行可能な計画か？
+5. 完成度：すべての必要な情報が含まれているか？
 
-응답 형식:
-평가 완료 시: "[COMPLETE] 모든 조건이 충족되었습니다."
-개선 필요 시: "다음 사항을 보완해주세요: [구체적인 피드백]"
+応答形式：
+評価完了時: "[COMPLETE] すべての条件が満たされました。"
+改善が必要な場合: "以下の事項を補完してください: [具体的なフィードバック]"
 
-중요: [COMPLETE]는 모든 기준이 충족되었을 때만 사용합니다.
+重要: [COMPLETE]はすべての基準が満たされた場合のみ使用します。
 ```
 
-### Group Chat Workflow 생성
+### Group Chat Workflowの作成
 
-1. **새 워크플로우 생성**
+1. **新しいワークフローの作成**
 
-   - Workflows 섹션에서 **+ Create workflow** 버튼을 클릭합니다.
-   - **Group Chat Workflow**를 선택합니다.
+   - Workflowsセクションで**+ Create workflow**ボタンをクリックします。
+   - **Group Chat Workflow**を選択します。
    
-   ![Group Chat Workflow 생성](../assets/05-09-group-chat-create.png)
+   ![Group Chat Workflow作成](../assets/05-09-group-chat-create.png)
 
 
-2. **에이전트 추가**
+2. **エージェントの追加**
 
    ```
    Participants:
    - StudentAgent
    - TeacherAgent
    
-   Termination condition: TeacherAgent가 [COMPLETE]를 응답할 때
-   Max turns: 4 (무한 루프 방지)
+   Termination condition: TeacherAgentが[COMPLETE]を応答した時
+   Max turns: 4 (無限ループ防止)
    ```
 
-   ![여러 에이전트 추가](../assets/05-10-group-chat-agents.png)
+   ![複数エージェントの追加](../assets/05-10-group-chat-agents.png)
 
-3. **대화 흐름 설정**
+3. **対話フローの設定**
 
    ```
    User → StudentAgent → TeacherAgent → StudentAgent → ...
    ```
 
-   - StudentAgent가 먼저 답변을 제공
-   - TeacherAgent가 평가 및 피드백
-   - [COMPLETE]가 나올 때까지 반복
+   - StudentAgentが最初に回答を提供
+   - TeacherAgentが評価とフィードバック
+   - [COMPLETE]が出るまで繰り返し
 
-5. **워크플로우 저장**
+5. **ワークフローの保存**
 
-   - **Save** 버튼을 클릭합니다.
+   - **Save**ボタンをクリックします。
    
-   ![Group Chat Workflow 저장](../assets/05-09-group-chat-save.png)
+   ![Group Chat Workflow保存](../assets/05-09-group-chat-save.png)
       
-   ![Group Chat Workflow 저장완료](../assets/05-09-group-chat-saved.png)
+   ![Group Chat Workflow保存完了](../assets/05-09-group-chat-saved.png)
 
-### 워크플로우 테스트
+### ワークフローのテスト
 
-1. **Preview 모드**
+1. **Previewモード**
 
-   - **Preview** 버튼을 클릭합니다.
+   - **Preview**ボタンをクリックします。
 
    ![Group Chat Workflow Preview](../assets/05-09-group-chat-preview.png)
 
-2. **테스트 질문**
+2. **テスト質問**
 
    ```
-   사용자: 제주도 2박 3일 여행 일정을 짜줘.
+   ユーザー: 東京2泊3日の旅行スケジュールを作成してください。
    ```
 
-3. **대화 흐름 관찰**
+3. **対話フローの観察**
 
    ```
    Turn 1:
-   StudentAgent: "제주도 추천 일정입니다. 1일차: 성산일출봉..."
+   StudentAgent: "東京のおすすめスケジュールです。1日目: 浅草寺..."
    
    Turn 2:
-   TeacherAgent: "비용 정보가 빠져있습니다. 예산을 포함해주세요."
+   TeacherAgent: "コスト情報が欠けています。予算を含めてください。"
    
    Turn 3:
-   StudentAgent: "수정된 일정입니다. 총 예산 50만원... 1일차: 성산일출봉 (입장료 5000원)..."
+   StudentAgent: "修正されたスケジュールです。総予算5万円... 1日目: 浅草寺 (入場料無料)..."
    
    Turn 4:
-   TeacherAgent: "구체적인 시간대가 없습니다. 시간별 일정을 추가해주세요."
+   TeacherAgent: "具体的な時間帯がありません。時間別のスケジュールを追加してください。"
    
    Turn 5:
-   StudentAgent: "최종 일정입니다. 1일차 오전 9시: 성산일출봉..."
+   StudentAgent: "最終スケジュールです。1日目 午前9時: 浅草寺..."
    
    Turn 6:
-   TeacherAgent: "[COMPLETE] 모든 조건이 충족되었습니다."
+   TeacherAgent: "[COMPLETE] すべての条件が満たされました。"
    ```
 
-### 💡 Group Chat 활용 팁
+### 💡 Group Chat活用のヒント
 
-- **역할 분담**: 각 에이전트에 명확한 역할 부여
-- **종료 조건**: 무한 루프를 방지하기 위한 명확한 종료 조건
-- **최대 턴 수**: 안전장치로 최대 턴 수 설정
-- **피드백 구체성**: TeacherAgent의 피드백이 구체적일수록 개선 효과 증가
+- **役割分担**: 各エージェントに明確な役割を付与
+- **終了条件**: 無限ループを防止するための明確な終了条件
+- **最大ターン数**: 安全装置として最大ターン数を設定
+- **フィードバックの具体性**: TeacherAgentのフィードバックが具体的であるほど改善効果が向上
 
-### ✅ 확인 사항
+### ✅ 確認事項
 
-- 에이전트 간 대화가 자연스럽게 이어지는지 확인
-- TeacherAgent의 평가 기준이 적절한지 확인
-- [COMPLETE] 조건에서 워크플로우가 종료되는지 확인
+- エージェント間の対話が自然に続くことを確認
+- TeacherAgentの評価基準が適切かを確認
+- [COMPLETE]条件でワークフローが終了することを確認
 
 ---
 
 ## Human-in-loop Workflow
 
-사람의 승인이나 입력이 필요한 지점에서 워크플로우를 일시 중지하는 패턴입니다.
+人間の承認や入力が必要なポイントでワークフローを一時停止するパターンです。
 
 
-### 개념
+### コンセプト
 
 ```
 Agent 1 → [Human Approval] → Agent 2 → [Human Input] → Agent 3
 ```
 
-Human-in-loop는 다음 상황에서 유용합니다:
-- 중요한 결정 승인
-- 민감한 정보 검증
-- 예산 승인
-- 개인 선호도 입력
+Human-in-loopは以下の状況で有用です：
+- 重要な決定の承認
+- 機密情報の検証
+- 予算承認
+- 個人の好みの入力
 
-### 워크플로우 설계
+### ワークフロー設計
 
-1. **에이전트 구성**
+1. **エージェント構成**
 
-   이전에 만든 Sequential Workflow를 기반으로 합니다:
+   以前作成したSequential Workflowをベースにします：
 
    ```
-   TravelPlannerAgent → [사용자 승인] → LocalAgent → TravelSummaryAgent
+   TravelPlannerAgent → [ユーザー承認] → LocalAgent → TravelSummaryAgent
    ```
 
-2. **Human Approval Point 추가**
+2. **Human Approval Pointの追加**
 
-   - TravelPlannerAgent 다음에 **Human approval** 단계를 추가합니다.
-   - 사용자는 초안 여행 계획을 검토하고:
-     - ✅ 승인 → LocalAgent로 진행
-     - ❌ 거부 → TravelPlannerAgent로 돌아가서 재생성
-     - 📝 수정 요청 → 피드백과 함께 재생성
+   - TravelPlannerAgentの後に**Human approval**ステップを追加します。
+   - ユーザーは初期の旅行計画をレビューして：
+     - ✅ 承認 → LocalAgentへ進行
+     - ❌ 拒否 → TravelPlannerAgentに戻って再生成
+     - 📝 修正要求 → フィードバックと共に再生成
 
-3. **워크플로우 설정**
+3. **ワークフロー設定**
 
    ```
    Workflow name: Human-in-loop-Workflow
-   Description: 사용자 승인을 포함한 여행 계획 워크플로우
+   Description: ユーザー承認を含む旅行計画ワークフロー
    
    Steps:
-   1. TravelPlannerAgent (초안 생성)
-   2. Human Approval (사용자 검토)
-   3. LocalAgent (승인 시 현지 정보 추가)
-   4. TravelSummaryAgent (최종 요약)
+   1. TravelPlannerAgent (初稿作成)
+   2. Human Approval (ユーザーレビュー)
+   3. LocalAgent (承認時に現地情報追加)
+   4. TravelSummaryAgent (最終要約)
    ```
 
-4. **Approval 설정**
+4. **Approval設定**
 
    ```
-   Approval message: "생성된 여행 계획을 검토해주세요. 승인하시겠습니까?"
+   Approval message: "生成された旅行計画をレビューしてください。承認しますか？"
    
    Options:
-   - Approve: 다음 단계로 진행
-   - Reject: TravelPlannerAgent로 돌아가기
-   - Modify: 수정 요청 입력 받기
+   - Approve: 次のステップへ進行
+   - Reject: TravelPlannerAgentに戻る
+   - Modify: 修正リクエスト入力を受付
    
-   Timeout: 24시간 (응답 없으면 자동 거부)
+   Timeout: 24時間 (応答がなければ自動拒否)
    ```
 
-### 테스트 시나리오
+### テストシナリオ
 
-1. **승인 시나리오**
-
-   ```
-   사용자: 안녕
-   TravelPlannerAgent: 여행 일정 초안 생성
-   [System]: 사용자 승인 대기...
-   사용자: 승인
-   LocalAgent: 현지 정보 추가
-   TravelSummaryAgent: 최종 요약
-   ```
-
-2. **거부 및 재생성 시나리오**
+1. **承認シナリオ**
 
    ```
-   사용자: 제주도 여행 계획 짜줘
-   TravelPlannerAgent: 초안 생성 (호텔 중심)
-   [System]: 사용자 승인 대기...
-   사용자: 거부. 펜션으로 변경해줘
-   TravelPlannerAgent: 수정된 계획 생성 (펜션 중심)
-   [System]: 사용자 승인 대기...
-   사용자: 승인
-   LocalAgent: 현지 정보 추가
-   TravelSummaryAgent: 최종 요약
+   ユーザー: こんにちは
+   TravelPlannerAgent: 旅行スケジュール初稿を生成
+   [System]: ユーザー承認待機...
+   ユーザー: 承認
+   LocalAgent: 現地情報を追加
+   TravelSummaryAgent: 最終要約
+   ```
+
+2. **拒否と再生成シナリオ**
+
+   ```
+   ユーザー: 東京旅行の計画を立ててください
+   TravelPlannerAgent: 初稿を生成（ホテル中心）
+   [System]: ユーザー承認待機...
+   ユーザー: 拒否。ゲストハウスに変更してください
+   TravelPlannerAgent: 修正された計画を生成（ゲストハウス中心）
+   [System]: ユーザー承認待機...
+   ユーザー: 承認
+   LocalAgent: 現地情報を追加
+   TravelSummaryAgent: 最終要約
    ```
 
    ![Human-in-Loop Workflow Preview](../assets/05-10-human-in-loop-workflow-preview.png)
 
-### 💡 Human-in-loop 모범 사례
+### 💡 Human-in-loopのベストプラクティス
 
 ```
-✅ 권장사항:
-- 승인 지점을 명확히 표시
-- 타임아웃 설정으로 무한 대기 방지
-- 사용자에게 컨텍스트 제공 (이전 대화 요약)
-- 간단한 승인 옵션 제공 (예/아니오/수정)
+✅ 推奨事項：
+- 承認ポイントを明確に表示
+- タイムアウト設定で無限待機を防止
+- ユーザーにコンテキストを提供（以前の対話要約）
+- シンプルな承認オプションを提供（はい/いいえ/修正）
 
-❌ 피해야 할 것:
-- 너무 많은 승인 지점
-- 불명확한 승인 질문
-- 긴 타임아웃 (사용자 경험 저하)
-- 승인 후 되돌리기 불가능한 구조
+❌ 避けるべきこと：
+- 承認ポイントが多すぎる
+- 不明確な承認質問
+- 長いタイムアウト（ユーザー体験低下）
+- 承認後に戻れない構造
 ```
 
-### ✅ 확인 사항
+### ✅ 確認事項
 
-- 승인 지점에서 워크플로우가 올바르게 멈추는지 확인
-- 승인/거부에 따라 적절히 분기되는지 확인
-- 타임아웃이 정상 작동하는지 확인
+- 承認ポイントでワークフローが正しく停止することを確認
+- 承認/拒否に応じて適切に分岐することを確認
+- タイムアウトが正常に動作することを確認
 
 ---
 
-## 📚 추가 리소스
+## 📚 追加リソース
 
-- [Microsoft Foundry Workflows 개요](https://learn.microsoft.com/en-us/azure/ai-foundry/agents/concepts/workflow?view=foundry)
-- [Microsoft Agent Framework Workflows Orchestrations 패턴](https://learn.microsoft.com/en-us/agent-framework/user-guide/workflows/orchestrations/overview)
+- [Microsoft Foundry Workflows概要](https://learn.microsoft.com/en-us/azure/ai-foundry/agents/concepts/workflow?view=foundry)
+- [Microsoft Agent Framework Workflows Orchestrationsパターン](https://learn.microsoft.com/en-us/agent-framework/user-guide/workflows/orchestrations/overview)
 
-## 다음 단계
+## 次のステップ
 
-복잡한 워크플로우를 구축했습니다! 이제 에이전트와 워크플로우의 성능을 평가하는 방법을 학습합니다:
+複雑なワークフローを構築しました！次はエージェントとワークフローのパフォーマンスを評価する方法を学習します：
 
-➡️ **[06. 평가](./06-evaluations.md)**: 에이전트 및 워크플로우의 품질을 체계적으로 평가합니다.
+➡️ **[06. 評価](./06-evaluations.md)**: エージェントとワークフローの品質を体系的に評価します。
 
 ---
 
-[← 이전: Foundry IQ](./04-foundry-iq.md) | [메인으로](./README.md) | [다음: 평가 →](./06-evaluations.md)
+[← 前へ: Foundry IQ](./04-foundry-iq.md) | [メインへ](./README.md) | [次へ: 評価 →](./06-evaluations.md)

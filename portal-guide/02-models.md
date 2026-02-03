@@ -1,262 +1,262 @@
-# 02. 모델 및 배포
+# 02. モデルとデプロイ
 
-이 모듈에서는 Microsoft Foundry에서 제공하는 다양한 LLM 모델을 탐색하고 배포하는 방법을 학습합니다.
+このモジュールでは、Microsoft Foundryで提供される各種LLMモデルを探索しデプロイする方法を学習します。
 
-## 📋 목차
+## 📋 目次
 
-- [모델 탐색 (Discover)](#모델-탐색-discover)
-- [모델 비교 및 배포](#모델-비교-및-배포)
-- [Embedding 모델 배포](#embedding-모델-배포)
-- [Model Router 배포](#model-router-배포)
-- [Model Router 구성](#model-router-구성)
-- [다음 단계](#다음-단계)
+- [モデル探索 (Discover)](#モデル探索-discover)
+- [モデル比較とデプロイ](#モデル比較とデプロイ)
+- [Embeddingモデルのデプロイ](#embeddingモデルのデプロイ)
+- [Model Routerのデプロイ](#model-routerのデプロイ)
+- [Model Routerの構成](#model-routerの構成)
+- [次のステップ](#次のステップ)
 
-## 🎯 학습 목표
+## 🎯 学習目標
 
-- 모델 리더보드를 통한 모델 성능 비교
-- 다양한 AI 모델 배포 방법 이해
-- Model Router 설정 및 구성
-- 모델 라우팅 전략 이해
+- モデルリーダーボードを通じたモデルパフォーマンスの比較
+- 各種AIモデルのデプロイ方法の理解
+- Model Routerの設定と構成
+- モデルルーティング戦略の理解
 
-## ⏱️ 예상 소요 시간
+## ⏱️ 予想所要時間
 
-약 15분
+約15分
 
 ---
 
-## 모델 탐색 (Discover)
+## モデル探索 (Discover)
 
-Foundry 포털의 Discover 섹션에서 다양한 AI 모델을 탐색할 수 있습니다.
+FoundryポータルのDiscoverセクションで各種AIモデルを探索できます。
 
-### 단계별 가이드
+### ステップバイステップガイド
 
-1. **Discover 섹션 이동**
-   - Foundry 포털 우측 상단 메뉴에서 **Discover**를 클릭합니다.
+1. **Discoverセクションへ移動**
+   - Foundryポータル右上メニューで**Discover**をクリックします。
 
-   ![Discover > Models 메뉴](../assets/02-00-discover-overview.png)
+   ![Discover > Models メニュー](../assets/02-00-discover-overview.png)
 
-   - **Models** 메뉴를 선택합니다.
+   - **Models**メニューを選択します。
    
-   ![Discover > Models 메뉴](../assets/02-01-discover-models.png)
+   ![Discover > Models メニュー](../assets/02-01-discover-models.png)
 
-2. **모델 리더보드 확인**
-   - **View leaderboard** 옵션을 클릭합니다.
-   - 다양한 모델의 성능 지표를 확인할 수 있습니다:
+2. **モデルリーダーボードの確認**
+   - **View leaderboard**オプションをクリックします。
+   - 各種モデルのパフォーマンス指標を確認できます：
      - Quality scores
      - Latency
      - Cost
      - Context window
      - Modality support (text, vision, audio)
    
-   ![Model Leaderboard 화면](../assets/02-02-model-leaderboard.png)
+   ![Model Leaderboard画面](../assets/02-02-model-leaderboard.png)
 
-3. **모델 카테고리 이해**
-   - **Language Models**: GPT-5.1, GPT-5, Claude 등
-   - **Embedding Models**: text-embedding-3-large, text-embedding-ada-002 등
+3. **モデルカテゴリの理解**
+   - **Language Models**: GPT-5.1、GPT-5、Claudeなど
+   - **Embedding Models**: text-embedding-3-large、text-embedding-ada-002など
 
-### 💡 팁
+### 💡 ヒント
 
-- 리더보드는 정기적으로 업데이트되므로 최신 모델을 확인하세요
-- 각 모델의 상세 페이지에서 capabilities와 limitations을 확인하세요
-
----
-
-## 모델 비교 및 배포
-
-### GPT-5.1 모델 배포
-
-1. **모델 비교 기능 사용**
-   - Models 페이지에서 **Compare models** 버튼을 클릭합니다.
-   - 비교하고 싶은 모델들을 선택합니다 (예: GPT-5.1, GPT-5, Claude 4.5 Sonnet).
-   - 성능, 비용, 기능을 비교합니다.
-   
-   ![Compare models 기능](../assets/02-03-model-compare.png)
-
-2. **GPT-5.1 선택 및 배포**
-   - 모델 목록에서 **gpt-5.1** 을 찾습니다.
-   - 모델 카드를 클릭하여 상세 정보를 확인합니다.
-   
-   ![GPT-5.1 모델 카드](../assets/02-04-gpt51-model-card.png)
-
-3. **배포 설정**
-   - **Deploy** 버튼을 클릭합니다.
-   
-   ![Deploy 버튼](../assets/02-05-gpt51-deploy-button.png)
-
-4. **배포 완료**
-   - **Default settings**를 클릭하여 배포를 시작합니다.
-   - 배포 완료까지 1-2분 정도 소요됩니다.
-
-### ✅ 확인 사항
-
-- Build > Models 섹션에서 배포된 `gpt-5.1` 모델 확인
-- 배포 상태가 "Succeeded"인지 확인
-- Endpoint URL이 생성되었는지 확인
-
-![Build > Models에서 배포된 gpt-5.1 확인](../assets/02-07-gpt51-deployed.png)
+- リーダーボードは定期的に更新されるため、最新モデルを確認してください
+- 各モデルの詳細ページでcapabilitiesとlimitationsを確認してください
 
 ---
 
-## Embedding 모델 배포
+## モデル比較とデプロイ
 
-Embedding 모델은 텍스트를 벡터로 변환하여 의미적 검색 및 유사도 계산에 사용됩니다.
+### GPT-5.1モデルのデプロイ
 
-### 단계별 가이드
-
-1. **Embedding 모델 검색**
-   - Discover > Models 페이지에서 검색창에 **"text-embedding"**을 입력합니다.
-   - 필터를 사용하여 Embedding 모델만 표시할 수 있습니다.
+1. **モデル比較機能の使用**
+   - Modelsページで**Compare models**ボタンをクリックします。
+   - 比較したいモデルを選択します（例：GPT-5.1、GPT-5、Claude 4.5 Sonnet）。
+   - パフォーマンス、コスト、機能を比較します。
    
-   ![text-embedding 검색](../assets/02-08-embedding-search.png)
+   ![Compare models機能](../assets/02-03-model-compare.png)
 
-2. **text-embedding-3-large 선택**
-   - **text-embedding-3-large** 모델을 선택합니다.
-   - 모델 상세 정보 확인:
+2. **GPT-5.1の選択とデプロイ**
+   - モデルリストから**gpt-5.1**を探します。
+   - モデルカードをクリックして詳細情報を確認します。
+   
+   ![GPT-5.1モデルカード](../assets/02-04-gpt51-model-card.png)
+
+3. **デプロイ設定**
+   - **Deploy**ボタンをクリックします。
+   
+   ![Deployボタン](../assets/02-05-gpt51-deploy-button.png)
+
+4. **デプロイ完了**
+   - **Default settings**をクリックしてデプロイを開始します。
+   - デプロイ完了まで1-2分程度かかります。
+
+### ✅ 確認事項
+
+- Build > Modelsセクションでデプロイされた`gpt-5.1`モデルを確認
+- デプロイステータスが「Succeeded」であることを確認
+- Endpoint URLが生成されたことを確認
+
+![Build > Modelsでデプロイされたgpt-5.1を確認](../assets/02-07-gpt51-deployed.png)
+
+---
+
+## Embeddingモデルのデプロイ
+
+Embeddingモデルはテキストをベクトルに変換し、意味的検索や類似度計算に使用されます。
+
+### ステップバイステップガイド
+
+1. **Embeddingモデルの検索**
+   - Discover > Modelsページで検索バーに**「text-embedding」**を入力します。
+   - フィルターを使用してEmbeddingモデルのみを表示できます。
+   
+   ![text-embedding検索](../assets/02-08-embedding-search.png)
+
+2. **text-embedding-3-largeの選択**
+   - **text-embedding-3-large**モデルを選択します。
+   - モデル詳細情報の確認：
      - Dimensions: 3072
    
-   ![text-embedding-3-large 모델 카드](../assets/02-09-embedding-model-card.png)
+   ![text-embedding-3-largeモデルカード](../assets/02-09-embedding-model-card.png)
 
-3. **배포 설정**
+3. **デプロイ設定**
    ```
    Deployment name: text-embedding-3-large
-   Model version: [최신 버전]
+   Model version: [最新バージョン]
    Deployment type: Standard
    ```
 
-4. **배포 실행**
-   - **Deploy** 버튼을 클릭하여 배포합니다.
+4. **デプロイ実行**
+   - **Deploy**ボタンをクリックしてデプロイします。
    
-   ![배포 완료 확인](../assets/02-10-embedding-deployed.png)
+   ![デプロイ完了確認](../assets/02-10-embedding-deployed.png)
 
 ---
 
-## Model Router 배포
+## Model Routerのデプロイ
 
-Model Router는 여러 모델 간의 지능형 라우팅을 제공하여 비용, 품질, 성능을 최적화합니다.
+Model Routerは複数のモデル間でインテリジェントなルーティングを提供し、コスト、品質、パフォーマンスを最適化します。
 
-### 단계별 가이드
+### ステップバイステップガイド
 
-1. **Model Router 검색**
-   - Discover > Models에서 **"model-router"**를 검색합니다.
+1. **Model Routerの検索**
+   - Discover > Modelsで**「model-router」**を検索します。
    
-   ![model-router 검색](../assets/02-11-model-router-search.png)
+   ![model-router検索](../assets/02-11-model-router-search.png)
 
-2. **Model Router 정보 확인**
-   - Model Router의 주요 기능:
-     - 자동 모델 선택
-     - 로드 밸런싱
-     - 비용 최적화
-     - 품질 기반 라우팅
+2. **Model Router情報の確認**
+   - Model Routerの主な機能：
+     - 自動モデル選択
+     - ロードバランシング
+     - コスト最適化
+     - 品質ベースのルーティング
 
-3. **배포 설정**
+3. **デプロイ設定**
    ```
    Deployment name: model-router
-   Routing strategy: Balanced (기본값)
-   Included models: [사용 가능한 모델 자동 감지]
+   Routing strategy: Balanced (デフォルト)
+   Included models: [利用可能なモデルを自動検出]
    ```
    
-   ![Model Router 배포 설정](../assets/02-12-model-router-deploy.png)
+   ![Model Routerデプロイ設定](../assets/02-12-model-router-deploy.png)
 
-4. **배포 완료**
-   - **Deploy** 버튼을 클릭합니다.
-   - Model Router가 사용할 수 있는 배포된 모델들을 자동으로 감지합니다.
+4. **デプロイ完了**
+   - **Deploy**ボタンをクリックします。
+   - Model Routerが使用可能なデプロイ済みモデルを自動検出します。
 
-### ✅ 확인 사항
+### ✅ 確認事項
 
-- Build > Models에서 `model-router` 배포 확인
-- 배포 상태 확인
-- Router가 접근 가능한 모델 목록 확인
+- Build > Modelsで`model-router`デプロイを確認
+- デプロイステータスを確認
+- Routerがアクセス可能なモデルリストを確認
 
-![Build > Models 전체 배포 목록](../assets/02-15-models-overview.png)
+![Build > Models全体デプロイリスト](../assets/02-15-models-overview.png)
 
 ---
 
-## Model Router 구성
+## Model Routerの構成
 
-Model Router의 라우팅 전략을 설정하여 애플리케이션 요구사항에 맞게 최적화합니다.
+Model Routerのルーティング戦略を設定してアプリケーション要件に合わせて最適化します。
 
-### 단계별 가이드
+### ステップバイステップガイド
 
-1. **Model Router 상세 페이지 이동**
-   - Build > Models 섹션으로 이동합니다.
-   - 배포된 **model-router**를 클릭합니다.
+1. **Model Router詳細ページへ移動**
+   - Build > Modelsセクションに移動します。
+   - デプロイされた**model-router**をクリックします。
 
-2. **Edit 모드 진입**
-   - **Details** 탭을 선택합니다.
-   - **Edit** 버튼을 클릭합니다.
+2. **Editモードへ進入**
+   - **Details**タブを選択します。
+   - **Edit**ボタンをクリックします。
    
-   ![Model Router 설정 화면 (Edit 모드)](../assets/02-13-model-router-config.png)
+   ![Model Router設定画面 (Editモード)](../assets/02-13-model-router-config.png)
 
-3. **Model Router Configuration 설정**
+3. **Model Router Configuration設定**
    
-   #### Routing Mode 옵션:
+   #### Routing Modeオプション：
    
-   ![Routing Mode 옵션](../assets/02-14-model-router-modes.png)
+   ![Routing Modeオプション](../assets/02-14-model-router-modes.png)
    
-   **a) Balanced Mode (균형 모드)**
+   **a) Balanced Mode（バランスモード）**
    ```
-   Description: 비용, 품질, 성능의 균형을 유지
-   Use case: 일반적인 프로덕션 워크로드
-   Behavior: 요청에 따라 적절한 모델 자동 선택
-   ```
-
-   **b) Quality Mode (품질 모드)**
-   ```
-   Description: 최고 품질의 응답 우선
-   Use case: 정확도가 중요한 애플리케이션
-   Behavior: 가장 성능이 좋은 모델 우선 사용
-   Cost: 상대적으로 높은 비용
+   Description: コスト、品質、パフォーマンスのバランスを維持
+   Use case: 一般的なプロダクションワークロード
+   Behavior: リクエストに応じて適切なモデルを自動選択
    ```
 
-   **c) Cost Mode (비용 모드)**
+   **b) Quality Mode（品質モード）**
    ```
-   Description: 비용 최적화 우선
-   Use case: 대량의 간단한 요청 처리
-   Behavior: 비용 효율적인 모델 우선 사용
-   Quality: 기본 품질 유지
+   Description: 最高品質のレスポンスを優先
+   Use case: 精度が重要なアプリケーション
+   Behavior: 最も性能の良いモデルを優先使用
+   Cost: 相対的に高コスト
    ```
 
-4. **라우팅 모드 선택**
-   - 워크샵에서는 **Balanced** 모드를 선택합니다.
-   - 필요에 따라 다른 모드로 변경 가능합니다.
+   **c) Cost Mode（コストモード）**
+   ```
+   Description: コスト最適化を優先
+   Use case: 大量のシンプルなリクエスト処理
+   Behavior: コスト効率の良いモデルを優先使用
+   Quality: 基本品質を維持
+   ```
 
-5. **저장 및 적용**
-   - **Save** 버튼을 클릭하여 설정을 저장합니다.
-   - 변경사항이 즉시 적용됩니다.
+4. **ルーティングモードの選択**
+   - ワークショップでは**Balanced**モードを選択します。
+   - 必要に応じて他のモードに変更可能です。
 
-### 📊 Model Router 동작 예시
+5. **保存と適用**
+   - **Save**ボタンをクリックして設定を保存します。
+   - 変更は即座に適用されます。
+
+### 📊 Model Router動作例
 
 ```
-사용자 요청 → Model Router → 판단:
-  - 간단한 질문 → GPT-5-nano (저비용)
-  - 복잡한 분석 → GPT-5-mini (고품질)
-  - 코드 생성 → Codex 계열
-  - 높은 부하 → 부하 분산
+ユーザーリクエスト → Model Router → 判断：
+  - シンプルな質問 → GPT-5-nano (低コスト)
+  - 複雑な分析 → GPT-5-mini (高品質)
+  - コード生成 → Codex系
+  - 高負荷 → 負荷分散
 ```
 
-### 💡 최적화 팁
+### 💡 最適化のヒント
 
-- **개발 환경**: Cost Mode로 비용 절감
-- **프로덕션**: Balanced Mode로 안정성 확보
-- **고객 대면 서비스**: Quality Mode로 사용자 경험 개선
-- **A/B 테스팅**: 모드별 성능 비교 분석
-
----
-
-## 📚 추가 리소스
-
-- [Model Catalog 가이드](https://learn.microsoft.com/en-us/azure/ai-foundry/foundry-models/concepts/models-sold-directly-by-azure?view=foundry&tabs=global-standard-aoai%2Cstandard-chat-completions%2Cglobal-standard&pivots=azure-openai)
-- [Model Router 개요](https://learn.microsoft.com/en-us/azure/ai-foundry/openai/concepts/model-router?view=foundry)
-- [Embedding Models 가이드](https://learn.microsoft.com/en-us/azure/ai-foundry/openai/how-to/embeddings?view=foundry&tabs=python-new)
+- **開発環境**: Cost Modeでコスト削減
+- **プロダクション**: Balanced Modeで安定性確保
+- **顧客向けサービス**: Quality Modeでユーザー体験向上
+- **A/Bテスト**: モード別パフォーマンス比較分析
 
 ---
 
-## 다음 단계
+## 📚 追加リソース
 
-모델 배포가 완료되었습니다! 이제 이 모델들을 활용하여 에이전트를 구축해봅시다:
-
-➡️ **[03. 에이전트 개발](./03-agents.md)**: 다양한 기능을 가진 AI 에이전트를 만들어봅니다.
+- [Model Catalogガイド](https://learn.microsoft.com/en-us/azure/ai-foundry/foundry-models/concepts/models-sold-directly-by-azure?view=foundry&tabs=global-standard-aoai%2Cstandard-chat-completions%2Cglobal-standard&pivots=azure-openai)
+- [Model Router概要](https://learn.microsoft.com/en-us/azure/ai-foundry/openai/concepts/model-router?view=foundry)
+- [Embedding Modelsガイド](https://learn.microsoft.com/en-us/azure/ai-foundry/openai/how-to/embeddings?view=foundry&tabs=python-new)
 
 ---
 
-[← 이전: 환경 설정](./01-setup.md) | [메인으로](./README.md) | [다음: 에이전트 개발 →](./03-agents.md)
+## 次のステップ
+
+モデルデプロイが完了しました！これらのモデルを活用してエージェントを構築しましょう：
+
+➡️ **[03. エージェント開発](./03-agents.md)**: 各種機能を持つAIエージェントを作成します。
+
+---
+
+[← 前へ: 環境設定](./01-setup.md) | [メインへ](./README.md) | [次へ: エージェント開発 →](./03-agents.md)
