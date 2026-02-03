@@ -1,170 +1,170 @@
-# 06. 평가 (Evaluations)
+# 06. 評価 (Evaluations)
 
-이 모듈에서는 AI 에이전트와 워크플로우의 성능을 체계적으로 평가하는 방법을 학습합니다.
+このモジュールでは、AIエージェントとワークフローのパフォーマンスを体系的に評価する方法を学習します。
 
-## 📋 목차
+## 📋 目次
 
-- [평가 개요](#평가-개요)
-- [평가 생성](#평가-생성)
-- [평가 기준 이해](#평가-기준-이해)
-- [평가 실행 및 결과 분석](#평가-실행-및-결과-분석)
-- [평가 모범 사례](#평가-모범-사례)
-- [다음 단계](#다음-단계)
+- [評価概要](#評価概要)
+- [評価の作成](#評価の作成)
+- [評価基準の理解](#評価基準の理解)
+- [評価の実行と結果分析](#評価の実行と結果分析)
+- [評価のベストプラクティス](#評価のベストプラクティス)
+- [次のステップ](#次のステップ)
 
-## 🎯 학습 목표
+## 🎯 学習目標
 
-- AI 에이전트 평가의 중요성 이해
-- Foundry의 자동 평가 기능 활용
-- 다양한 평가 지표의 의미와 활용법 학습
-- 합성 데이터를 사용한 평가 수행
-- 평가 결과 해석 및 개선 방안 도출
+- AIエージェント評価の重要性を理解
+- Foundryの自動評価機能を活用
+- 各種評価指標の意味と活用法を学習
+- 合成データを使用した評価の実行
+- 評価結果の解釈と改善策の導出
 
-## ⏱️ 예상 소요 시간
+## ⏱️ 予想所要時間
 
-약 10분
+約10分
 
 ---
 
-## 평가 개요
+## 評価概要
 
-### 왜 평가가 중요한가?
+### なぜ評価が重要か？
 
-AI 에이전트를 프로덕션에 배포하기 전에 다음 사항을 검증해야 합니다:
+AIエージェントをプロダクションにデプロイする前に以下の事項を検証する必要があります：
 
 ```
-정확성 → 관련성 → 일관성 → 자연스러움 → 안전성
+正確性 → 関連性 → 一貫性 → 自然さ → 安全性
 ```
 
-평가 없이 배포하면:
-- ❌ 부정확한 답변으로 사용자 신뢰 저하
-- ❌ 관련 없는 응답으로 사용자 경험 악화
-- ❌ 일관성 없는 품질로 브랜드 이미지 손상
-- ❌ 부적절한 콘텐츠 생성으로 법적 문제
+評価なしでデプロイすると：
+- ❌ 不正確な回答でユーザーの信頼低下
+- ❌ 関連のないレスポンスでユーザー体験悪化
+- ❌ 一貫性のない品質でブランドイメージ損傷
+- ❌ 不適切なコンテンツ生成で法的問題
 
-### 평가 유형
+### 評価タイプ
 
-| 평가 유형 | 설명 | 사용 시기 |
+| 評価タイプ | 説明 | 使用時期 |
 |---------|------|---------|
-| **Offline Evaluation** | 배포 전 테스트 데이터로 평가 | 개발 단계 |
-| **A/B Testing** | 두 버전 비교 | 프로덕션 배포 시 |
-| **Online Monitoring** | 실시간 성능 모니터링 | 운영 중 |
-| **Human Evaluation** | 사람이 직접 평가 | 품질 검증 |
+| **Offline Evaluation** | デプロイ前のテストデータで評価 | 開発段階 |
+| **A/B Testing** | 2つのバージョン比較 | プロダクションデプロイ時 |
+| **Online Monitoring** | リアルタイムパフォーマンスモニタリング | 運用中 |
+| **Human Evaluation** | 人が直接評価 | 品質検証 |
 
-### Microsoft Foundry의 평가 기능
+### Microsoft Foundryの評価機能
 
-Foundry는 다음을 자동화합니다:
-- ✅ 테스트 데이터 생성 (Synthetic generation)
-- ✅ 다양한 평가 지표 적용
-- ✅ 대규모 평가 실행
-- ✅ 결과 시각화 및 분석
+Foundryは以下を自動化します：
+- ✅ テストデータ生成（Synthetic generation）
+- ✅ 各種評価指標の適用
+- ✅ 大規模評価の実行
+- ✅ 結果の可視化と分析
 
 ---
 
-## 평가 생성
+## 評価の作成
 
-이전에 만든 `ModelRouterAgent`를 평가해봅니다.
+以前作成した`ModelRouterAgent`を評価します。
 
-### 단계별 가이드
+### ステップバイステップガイド
 
-1. **Evaluations 섹션 이동**
+1. **Evaluationsセクションへ移動**
 
-   - Foundry 포털 우측 상단 메뉴에서 **Build**를 선택합니다.
-   - **Evaluations** 메뉴를 클릭합니다.
+   - Foundryポータル右上メニューで**Build**を選択します。
+   - **Evaluations**メニューをクリックします。
    
-   ![Build > Evaluations 메뉴](../assets/06-01-evaluations-menu.png)
+   ![Build > Evaluationsメニュー](../assets/06-01-evaluations-menu.png)
 
 2. **Evaluation Catalog**
 
    ![Evaluations Catalog](../assets/06-01-evaluations-catalog.png)
 
-3. **새 평가 생성**
+3. **新しい評価の作成**
 
-   - **+ Create new evaluation** 또는 **New evaluation** 버튼을 클릭합니다.
+   - **+ Create new evaluation**または**New evaluation**ボタンをクリックします。
    
-   ![Create new evaluation 버튼](../assets/06-02-create-evaluation.png)
+   ![Create new evaluationボタン](../assets/06-02-create-evaluation.png)
 
-4. **Target 선택**
+4. **Targetの選択**
 
-   평가 대상을 선택합니다:
+   評価対象を選択します：
    
-   ![Target 선택 (Agent)](../assets/06-03-evaluation-target.png)
+   ![Target選択 (Agent)](../assets/06-03-evaluation-target.png)
 
    ```
    Target type: Agent
    Agent: ModelRouterAgent
-   Version: Latest (또는 특정 버전)
+   Version: Latest (または特定のバージョン)
    ```
 
-   **다른 Target 옵션**:
-   - **Agent**: 단일 에이전트 평가
-   - **Workflow**: 워크플로우 평가
-   - **Model**: 모델 직접 평가
-   - **Endpoint**: 외부 API 엔드포인트 평가
+   **他のTargetオプション**：
+   - **Agent**: 単一エージェント評価
+   - **Workflow**: ワークフロー評価
+   - **Model**: モデル直接評価
+   - **Endpoint**: 外部APIエンドポイント評価
 
-5. **Data 설정**
+5. **Data設定**
 
-   테스트 데이터를 선택합니다:
+   テストデータを選択します：
    
-   ![Data 설정 (Synthetic generation)](../assets/06-04-evaluation-data1.png)
+   ![Data設定 (Synthetic generation)](../assets/06-04-evaluation-data1.png)
 
-   ![Data 설정 (Synthetic generation)](../assets/06-04-evaluation-data2.png)
+   ![Data設定 (Synthetic generation)](../assets/06-04-evaluation-data2.png)
 
-   ![Data 설정 (Synthetic generation)](../assets/06-04-evaluation-data3.png)
+   ![Data設定 (Synthetic generation)](../assets/06-04-evaluation-data3.png)
 
    ```
    Data source: Synthetic generation
    
-   Topic: 일반 대화 및 정보 제공
+   Topic: 一般対話および情報提供
    
    Number of samples: 50
-   (더 많은 샘플은 더 신뢰할 수 있지만 시간이 더 걸림)
+   (より多くのサンプルはより信頼できるが時間がかかる)
    
-   Languages: Korean, English
+   Languages: Japanese, English
    ```
 
-   **Synthetic Generation이란?**
-   - AI가 자동으로 다양한 테스트 질문 생성
-   - 실제 사용 패턴을 시뮬레이션
-   - 수동으로 테스트 케이스를 작성할 필요 없음
+   **Synthetic Generationとは？**
+   - AIが自動で様々なテスト質問を生成
+   - 実際の使用パターンをシミュレーション
+   - 手動でテストケースを作成する必要なし
 
-   **다른 Data 옵션**:
-   - **Upload dataset**: CSV/JSON 파일 업로드
-   - **Use existing dataset**: 이전에 저장한 데이터셋 사용
+   **他のDataオプション**：
+   - **Upload dataset**: CSV/JSONファイルのアップロード
+   - **Use existing dataset**: 以前保存したデータセットを使用
 
-6. **Criteria 선택**
+6. **Criteriaの選択**
 
-   평가 기준을 선택합니다:
+   評価基準を選択します：
 
    ```
-   ☑ Groundedness (답변이 사실에 기반하는지)
-   ☑ Relevance (질문과 답변의 관련성)
-   ☑ Coherence (답변의 일관성)
-   ☑ Fluency (답변의 자연스러움)
+   ☑ Groundedness (回答が事実に基づいているか)
+   ☑ Relevance (質問と回答の関連性)
+   ☑ Coherence (回答の一貫性)
+   ☑ Fluency (回答の自然さ)
    ```
 
-   ![Metrics 선택 (Groundedness, Relevance 등)](../assets/06-05-evaluation-metrics.png)
+   ![Metrics選択 (Groundedness, Relevanceなど)](../assets/06-05-evaluation-metrics.png)
 
-   각 기준에 대한 상세 설명은 아래 섹션을 참조하세요.
+   各基準の詳細説明は以下のセクションを参照してください。
 
 7. **Review**
 
-   설정을 검토합니다:
+   設定をレビューします：
    
    ![Review and create](../assets/06-06-evaluation-review.png)
 
    ```
    Target: ModelRouterAgent (Latest)
-   Data: Synthetic (50 samples, Korean/English)
+   Data: Synthetic (50 samples, Japanese/English)
    Criteria: Groundedness, Relevance, Coherence, Fluency
    Estimated time: ~10-15 minutes
-   Estimated cost: $2-5 (샘플 수에 따라 다름)
+   Estimated cost: $2-5 (サンプル数による)
    ```
 
 8. **Submit**
 
-   - 모든 설정을 확인한 후 **Submit** 버튼을 클릭합니다.
-   - 평가가 백그라운드에서 실행됩니다.
-   - 진행 상황은 Evaluations 페이지에서 확인할 수 있습니다.
+   - すべての設定を確認した後、**Submit**ボタンをクリックします。
+   - 評価がバックグラウンドで実行されます。
+   - 進捗状況はEvaluationsページで確認できます。
 
    ![Evaluation Run](../assets/06-06-evaluation-run.png)
 
@@ -182,130 +182,130 @@ Foundry는 다음을 자동화합니다:
 
    ![Evaluation Result](../assets/06-06-evaluation-result6.png)
 
-### ✅ 확인 사항
+### ✅ 確認事項
 
-- 평가가 "Running" 상태인지 확인
-- 예상 완료 시간 확인
-- 필요하면 다른 에이전트나 워크플로우 평가도 생성
+- 評価が「Running」状態であることを確認
+- 予想完了時間を確認
+- 必要に応じて他のエージェントやワークフローの評価も作成
 
 ---
 
-## 평가 기준 이해
+## 評価基準の理解
 
-### Foundry 제공 Evaluator 전체 목록
+### Foundry提供のEvaluator全リスト
 
-Foundry는 6개 카테고리, 32개의 Evaluator를 제공합니다.
+Foundryは6つのカテゴリ、32個のEvaluatorを提供しています。
 
-#### 🎯 일반 품질 (General Purpose)
+#### 🎯 一般品質 (General Purpose)
 
-| Evaluator | 설명 |
+| Evaluator | 説明 |
 |-----------|------|
-| **CoherenceEvaluator** | 응답의 논리적 일관성과 흐름 측정 |
-| **FluencyEvaluator** | 자연어 품질과 가독성 측정 |
-| **QAEvaluator** | Q&A 종합 평가 *(복합: Groundedness, Relevance, Coherence, Fluency, Similarity, F1Score)* |
+| **CoherenceEvaluator** | レスポンスの論理的一貫性とフローを測定 |
+| **FluencyEvaluator** | 自然言語の品質と可読性を測定 |
+| **QAEvaluator** | Q&A総合評価 *(複合: Groundedness, Relevance, Coherence, Fluency, Similarity, F1Score)* |
 
-#### 📊 텍스트 유사도 (Textual Similarity)
+#### 📊 テキスト類似度 (Textual Similarity)
 
-| Evaluator | 설명 |
+| Evaluator | 説明 |
 |-----------|------|
-| **SimilarityEvaluator** | 응답과 정답 간 의미적 유사도 |
-| **F1ScoreEvaluator** | 정밀도와 재현율의 조화평균 |
-| **BleuScoreEvaluator** | 기계 번역 품질 (n-gram 기반) |
-| **GleuScoreEvaluator** | 문장 수준 BLEU 변형 |
-| **RougeScoreEvaluator** | 요약 품질 (n-gram 재현율) |
-| **MeteorScoreEvaluator** | 유의어/어간 고려 번역 평가 |
+| **SimilarityEvaluator** | レスポンスと正解間の意味的類似度 |
+| **F1ScoreEvaluator** | 精度と再現率の調和平均 |
+| **BleuScoreEvaluator** | 機械翻訳品質 (n-gramベース) |
+| **GleuScoreEvaluator** | 文レベルBLEU変形 |
+| **RougeScoreEvaluator** | 要約品質 (n-gram再現率) |
+| **MeteorScoreEvaluator** | 同義語/語幹考慮の翻訳評価 |
 
 #### 🔍 RAG (Retrieval-Augmented Generation)
 
-| Evaluator | 설명 |
+| Evaluator | 説明 |
 |-----------|------|
-| **RetrievalEvaluator** | 정보 검색 효과성 |
-| **DocumentRetrievalEvaluator** | 정답 대비 검색 정확도 |
-| **GroundednessEvaluator** | 응답이 컨텍스트와 일치하는지 (1-5점) |
-| **GroundednessProEvaluator** | 고급 근거성 평가 (Azure AI Content Safety 기반) |
-| **RelevanceEvaluator** | 응답과 질문의 관련성 (1-5점) |
-| **ResponseCompletenessEvaluator** | 정답 대비 응답 완전성 |
+| **RetrievalEvaluator** | 情報検索の効果性 |
+| **DocumentRetrievalEvaluator** | 正解に対する検索精度 |
+| **GroundednessEvaluator** | レスポンスがコンテキストと一致するか (1-5点) |
+| **GroundednessProEvaluator** | 高度な根拠性評価 (Azure AI Content Safetyベース) |
+| **RelevanceEvaluator** | レスポンスと質問の関連性 (1-5点) |
+| **ResponseCompletenessEvaluator** | 正解に対するレスポンス完全性 |
 
-#### 🤖 에이전트 (Agentic)
+#### 🤖 エージェント (Agentic)
 
-| Evaluator | 설명 |
+| Evaluator | 説明 |
 |-----------|------|
-| **IntentResolutionEvaluator** | 사용자 의도 파악 정확도 |
-| **TaskAdherenceEvaluator** | 식별된 작업 수행 정도 |
-| **ToolCallAccuracyEvaluator** | 올바른 도구 선택 및 호출 |
+| **IntentResolutionEvaluator** | ユーザー意図把握の精度 |
+| **TaskAdherenceEvaluator** | 識別されたタスクの実行度 |
+| **ToolCallAccuracyEvaluator** | 正しいツール選択と呼び出し |
 
-#### 🛡️ 위험 및 안전 (Risk and Safety)
+#### 🛡️ リスクと安全性 (Risk and Safety)
 
-| Evaluator | 설명 |
+| Evaluator | 説明 |
 |-----------|------|
-| **ViolenceEvaluator** | 폭력적 콘텐츠 탐지 |
-| **SexualEvaluator** | 성적 콘텐츠 탐지 |
-| **SelfHarmEvaluator** | 자해 관련 콘텐츠 탐지 |
-| **HateUnfairnessEvaluator** | 혐오/차별 콘텐츠 탐지 |
-| **IndirectAttackEvaluator** | 간접적 공격(탈옥 시도 등) 탐지 |
-| **ProtectedMaterialEvaluator** | 저작권 보호 자료 탐지 |
-| **UngroundedAttributesEvaluator** | 근거 없는 주장 탐지 |
-| **CodeVulnerabilityEvaluator** | 코드 보안 취약점 탐지 |
-| **ContentSafetyEvaluator** | 안전 종합 평가 *(복합: Violence, Sexual, SelfHarm, HateUnfairness)* |
+| **ViolenceEvaluator** | 暴力的コンテンツの検出 |
+| **SexualEvaluator** | 性的コンテンツの検出 |
+| **SelfHarmEvaluator** | 自傷関連コンテンツの検出 |
+| **HateUnfairnessEvaluator** | 嫌悪/差別コンテンツの検出 |
+| **IndirectAttackEvaluator** | 間接的攻撃（脱獄試行など）の検出 |
+| **ProtectedMaterialEvaluator** | 著作権保護素材の検出 |
+| **UngroundedAttributesEvaluator** | 根拠のない主張の検出 |
+| **CodeVulnerabilityEvaluator** | コードセキュリティ脆弱性の検出 |
+| **ContentSafetyEvaluator** | 安全性総合評価 *(複合: Violence, Sexual, SelfHarm, HateUnfairness)* |
 
 #### 🔧 Azure OpenAI Graders
 
-| Evaluator | 설명 |
+| Evaluator | 説明 |
 |-----------|------|
-| **AzureOpenAILabelGrader** | 레이블 기반 채점 |
-| **AzureOpenAIStringCheckGrader** | 문자열 검증 채점 |
-| **AzureOpenAITextSimilarityGrader** | 텍스트 유사도 채점 |
-| **AzureOpenAIGrader** | 범용 Azure OpenAI 채점 |
+| **AzureOpenAILabelGrader** | ラベルベースの採点 |
+| **AzureOpenAIStringCheckGrader** | 文字列検証採点 |
+| **AzureOpenAITextSimilarityGrader** | テキスト類似度採点 |
+| **AzureOpenAIGrader** | 汎用Azure OpenAI採点 |
 
 ---
 
-### 핵심 평가 기준 4가지
+### コア評価基準4つ
 
-이 워크샵에서는 가장 많이 사용되는 4가지 평가 기준을 사용합니다.
+このワークショップでは最も多く使用される4つの評価基準を使用します。
 
-| 기준 | 정의 | 점수 기준 |
+| 基準 | 定義 | スコア基準 |
 |------|------|----------|
-| **Groundedness** (근거성) | 답변이 사실/컨텍스트에 기반하는지 | 1=환각, 5=사실 기반 |
-| **Relevance** (관련성) | 답변이 질문과 관련 있는지 | 1=무관, 5=완벽 관련 |
-| **Coherence** (일관성) | 답변이 논리적으로 구조화됐는지 | 1=혼란, 5=완벽 구조 |
-| **Fluency** (유창성) | 답변이 문법적으로 자연스러운지 | 1=어색, 5=완벽 자연 |
+| **Groundedness** (根拠性) | 回答が事実/コンテキストに基づいているか | 1=ハルシネーション, 5=事実ベース |
+| **Relevance** (関連性) | 回答が質問と関連があるか | 1=無関係, 5=完璧な関連 |
+| **Coherence** (一貫性) | 回答が論理的に構造化されているか | 1=混乱, 5=完璧な構造 |
+| **Fluency** (流暢性) | 回答が文法的に自然か | 1=不自然, 5=完璧に自然 |
 
-**각 기준이 중요한 이유**:
+**各基準が重要な理由**：
 
 | Groundedness | Relevance | Coherence | Fluency |
 |--------------|-----------|-----------|---------|
-| 사용자 신뢰 확보 | 사용자 만족도 향상 | 이해하기 쉬운 답변 | 사용자 경험 향상 |
-| 법적 책임 최소화 | 효율적 정보 전달 | 전문적 이미지 | 브랜드 이미지 유지 |
-| 허위 정보 방지 | 대화 흐름 유지 | 신뢰성 향상 | 이해도 증가 |
+| ユーザーの信頼確保 | ユーザー満足度向上 | 理解しやすい回答 | ユーザー体験向上 |
+| 法的責任の最小化 | 効率的な情報伝達 | プロフェッショナルなイメージ | ブランドイメージ維持 |
+| 虚偽情報の防止 | 対話フローの維持 | 信頼性向上 | 理解度向上 |
 
 ---
 
-## 평가 모범 사례
+## 評価のベストプラクティス
 
-| 항목 | 권장 사항 |
+| 項目 | 推奨事項 |
 |------|----------|
-| **샘플 수** | 개발: 10-20개 / 테스트: 50-100개 / 프로덕션: 200+개 |
-| **테스트 시나리오** | 일반·복잡·모호·다국어 질문 + Edge cases |
-| **평가 주기** | 개발 중: 매 업데이트 / 배포 전: 필수 / 배포 후: 주간/월간 |
-| **기준선 점수** | Groundedness ≥4.0 / 나머지 ≥3.5 / Pass rate ≥80% |
-| **Human Evaluation** | 자동 평가와 병행하여 새로운 문제 패턴 발견 |
+| **サンプル数** | 開発: 10-20個 / テスト: 50-100個 / プロダクション: 200+個 |
+| **テストシナリオ** | 一般・複雑・曖昧・多言語質問 + Edge cases |
+| **評価周期** | 開発中: 各アップデート時 / デプロイ前: 必須 / デプロイ後: 週次/月次 |
+| **基準点スコア** | Groundedness ≥4.0 / その他 ≥3.5 / Pass rate ≥80% |
+| **Human Evaluation** | 自動評価と併用して新しい問題パターンを発見 |
 
 ---
 
-## 📚 추가 리소스
+## 📚 追加リソース
 
-- [Azure AI Evaluation 개요](https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/observability?view=foundry#what-are-evaluators)
-- [파운드리 포털에서 평가 실행](https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/evaluate-generative-ai-app?view=foundry)
-- [에이전트 평가](https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/evaluation-evaluators/agent-evaluators?view=foundry)
-
----
-
-## 다음 단계
-
-에이전트와 워크플로우의 품질을 평가하는 방법을 배웠습니다! 이제 프로덕션 환경에서 리소스를 관리하고 모니터링하는 방법을 학습합니다:
-
-➡️ **[07. Control Plane](./07-control-plane.md)**: Fleet 관리, 모니터링, 컴플라이언스 등을 학습합니다.
+- [Azure AI Evaluation概要](https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/observability?view=foundry#what-are-evaluators)
+- [FoundryポータルでのEvaluation実行](https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/evaluate-generative-ai-app?view=foundry)
+- [エージェント評価](https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/evaluation-evaluators/agent-evaluators?view=foundry)
 
 ---
 
-[← 이전: 워크플로우](./05-workflows.md) | [메인으로](./README.md) | [다음: Control Plane →](./07-control-plane.md)
+## 次のステップ
+
+エージェントとワークフローの品質を評価する方法を学びました！次はプロダクション環境でリソースを管理しモニタリングする方法を学習します：
+
+➡️ **[07. Control Plane](./07-control-plane.md)**: Fleet管理、モニタリング、コンプライアンスなどを学習します。
+
+---
+
+[← 前へ: ワークフロー](./05-workflows.md) | [メインへ](./README.md) | [次へ: Control Plane →](./07-control-plane.md)
